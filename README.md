@@ -6,14 +6,14 @@ based on a part of robust photometric stereo works in 2010-2018 conducted at Mic
 together with external collaborators.
 
 
-###What is Photometric Stereo?
+### What is Photometric Stereo?
 
 
 Photometric Stereo is an approach to determining surface normal of 
 a scene from a set of images recorded from a fixed viewpoint but under
 varying lighting conditions, originally proposed by Woodham [1].
 
-###Conditions of use
+### Conditions of use
 
 This package is distributed under the GNU General Public License. For
 information on commercial licensing, please contact the authors at the
@@ -45,7 +45,7 @@ consider citing the following papers:
         year={2014}
     }
 
-###Dependencies
+### Dependencies
 The code is written in Python 3.6 but should be able to adapt it to Python 2.x if needed.
 You might need the following Python packages installed:
 * cv2 (OpenCV, used for image I/O)
@@ -54,17 +54,17 @@ You might need the following Python packages installed:
 * sklearn (scikit-learn, used for normalization of array)
 
 
-###Acknowledgements
+### Acknowledgements
 
 This work was supported by Microsoft Research Asia, Osaka University, and JSPS KAKENHI Grant
 Number JP16H01732, Japan.
 
-###Contact information
+### Contact information
 
 Questions? Comments? Bug reports? Please contact Yasuyuki Matsushita at yasumat@ist.osaka-u.ac.jp.
 
 
-###References
+### References
 
 [1] Woodham, R.J. Photometric method for determining surface orientation from multiple images. 
 Optical Engineerings 19, I, 139-144, 1980
