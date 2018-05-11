@@ -1,2 +1,7 @@
 .idea/
 
+__pycache__/
+data/.DS_Store
+data/caesar_lambert/.DS_Store
+data/caesar_specular/.DS_Store
+

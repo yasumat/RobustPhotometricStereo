@@ -1,14 +1,13 @@
-from sklearn.preprocessing import normalize
-import pmsutil
-import pmsnumerics
+import rpsutil
+import rpsnumerics
 import numpy as np
-import time
+from sklearn.preprocessing import normalize
 
 
-class PMS(object):
+class RPS(object):
     """
     Calibrated (Lamebertian) Photometric Stereo
-    """
+   """
     # Choice of solution methods
     L2_SOLVER = 0   # Conventional least-squares
     L1_SOLVER = 1   # L1 residual minimization
@@ -37,7 +36,7 @@ class PMS(object):
 
         :param filename: filename of lights.txt
         """
-        self.L = pmsutil.load_lighttxt(filename)
+        self.L = rpsutil.load_lighttxt(filename)
 
     def load_lightnpy(self, filename):
         """
@@ -50,7 +49,7 @@ class PMS(object):
 
         :param filename: filename of lights.npy
         """
-        self.L = pmsutil.load_lightnpy(filename)
+        self.L = rpsutil.load_lightnpy(filename)
 
     def load_images(self, foldername, ext):
         """
@@ -58,7 +57,7 @@ class PMS(object):
         :param foldername: foldername
         :param ext: file extension
         """
-        self.M, self.height, self.width = pmsutil.load_images(foldername, ext)
+        self.M, self.height, self.width = rpsutil.load_images(foldername, ext)
 
     def load_mask(self, filename):
         """
@@ -67,7 +66,7 @@ class PMS(object):
         :param filename: filename of the mask image
         :return: None
         """
-        mask = pmsutil.load_image(filename)
+        mask = rpsutil.load_image(filename)
         mask = mask.reshape((-1, 1))
         self.valid_ind = np.where(mask != 0)[0]
         self.invalid_ind = np.where(mask == 0)[0]
@@ -77,7 +76,7 @@ class PMS(object):
         Visualize normal map
         :return: None
         """
-        pmsutil.disp_normalmap(self.N, self.height, self.width)
+        rpsutil.disp_normalmap(self.N, self.height, self.width)
 
     def solve(self, method=L2_SOLVER):
         if self.M is None:
@@ -87,17 +86,17 @@ class PMS(object):
         if self.M.shape[1] != self.L.shape[1]:
             raise ValueError("Inconsistent dimensionality between M and L")
 
-        if method == PMS.L2_SOLVER:
+        if method == RPS.L2_SOLVER:
             self._solve_l2()
-        elif method == PMS.L1_SOLVER:
+        elif method == RPS.L1_SOLVER:
             self._solve_l1()
-        elif method == PMS.L1_SOLVER_MULTICORE:
+        elif method == RPS.L1_SOLVER_MULTICORE:
             self._solve_l1_multicore()
-        elif method == PMS.SBL_SOLVER:
+        elif method == RPS.SBL_SOLVER:
             self._solve_sbl()
-        elif method == PMS.SBL_SOLVER_MULTICORE:
+        elif method == RPS.SBL_SOLVER_MULTICORE:
             self._solve_sbl_multicore()
-        elif method == PMS.RPCA_SOLVER:
+        elif method == RPS.RPCA_SOLVER:
             self._solve_rpca()
         else:
             raise ValueError("Undefined solver")
@@ -135,7 +134,7 @@ class PMS(object):
 
         for index in indices:
             b = np.array([self.M[index, :]]).T
-            n = pmsnumerics.L1_residual_min(A, b)
+            n = rpsnumerics.L1_residual_min(A, b)
             self.N[index, :] = n.ravel()
         self.N = normalize(self.N, axis=1)
 
@@ -179,7 +178,7 @@ class PMS(object):
         """
         A = self.L.T
         b = np.array([self.M[index, :]]).T
-        n = pmsnumerics.L1_residual_min(A, b)   # row vector of a surface normal at pixel "index"
+        n = rpsnumerics.L1_residual_min(A, b)   # row vector of a surface normal at pixel "index"
         return n.ravel()
 
     def _solve_sbl(self):
@@ -201,7 +200,7 @@ class PMS(object):
 
         for index in indices:
             b = np.array([self.M[index, :]]).T
-            n = pmsnumerics.sparse_bayesian_learning(A, b)
+            n = rpsnumerics.sparse_bayesian_learning(A, b)
             self.N[index, :] = n.ravel()
         self.N = normalize(self.N, axis=1)
 
@@ -245,7 +244,7 @@ class PMS(object):
         """
         A = self.L.T
         b = np.array([self.M[index, :]]).T
-        n = pmsnumerics.sparse_bayesian_learning(A, b)   # row vector of a surface normal at pixel "index"
+        n = rpsnumerics.sparse_bayesian_learning(A, b)   # row vector of a surface normal at pixel "index"
         return n.ravel()
 
     def _solve_rpca(self):
@@ -262,7 +261,7 @@ class PMS(object):
             _M = self.M.T
         else:
             _M = self.M[self.valid_ind, :].T
-        A, E, ite = pmsnumerics.rpca_inexact_alm(_M)    # RPCA Photometric stereo
+        A, E, ite = rpsnumerics.rpca_inexact_alm(_M)    # RPCA Photometric stereo
         if self.valid_ind is None:
             self.N = np.linalg.lstsq(self.L.T, A, rcond=None)[0].T
             self.N = normalize(self.N, axis=1)    # normalize to account for diffuse reflectance
@@ -272,20 +271,3 @@ class PMS(object):
             self.N = np.zeros((self.M.shape[0], 3))
             for i in range(self.N.shape[1]):
                 self.N[self.valid_ind, i] = N[:, i]
-
-
-if __name__ == '__main__':
-    light_filename = "./data/caesar_lambert/lights.txt"
-    mask_filename = "./data/caesar_mask.png"
-    img_foldername = "./data/caesar_lambert/"
-    img_extension = "png"
-
-    mypms = PMS()
-    mypms.load_mask(filename=mask_filename)
-    mypms.load_lighttxt(filename=light_filename)
-    mypms.load_images(foldername=img_foldername, ext=img_extension)
-    start = time.time()
-    mypms.solve(PMS.L2_SOLVER)
-    elapsed_time = time.time() - start
-    print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
-    mypms.disp_normalmap()
