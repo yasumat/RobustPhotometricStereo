@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Robust Photometric Stereo in Python
+"""
+__author__ = "Yasuyuki Matsushita <yasumat@ist.osaka-u.ac.jp>"
+__version__ = "0.1.0"
+__date__ = "11 May 2018"
+
 import rpsutil
 import rpsnumerics
 import numpy as np
@@ -6,8 +16,8 @@ from sklearn.preprocessing import normalize
 
 class RPS(object):
     """
-    Calibrated (Lamebertian) Photometric Stereo
-   """
+    Robust Photometric Stereo class
+    """
     # Choice of solution methods
     L2_SOLVER = 0   # Conventional least-squares
     L1_SOLVER = 1   # L1 residual minimization
@@ -25,7 +35,7 @@ class RPS(object):
         self.valid_ind = None    # mask (indices of active pixel locations (rows of M))
         self.invalid_ind = None    # mask (indices of inactive pixel locations (rows of M))
 
-    def load_lighttxt(self, filename):
+    def load_lighttxt(self, filename=None):
         """
         Load light file specified by filename.
         The format of lights.txt should be
@@ -38,7 +48,7 @@ class RPS(object):
         """
         self.L = rpsutil.load_lighttxt(filename)
 
-    def load_lightnpy(self, filename):
+    def load_lightnpy(self, filename=None):
         """
         Load light numpy array file specified by filename.
         The format of lights.npy should be
@@ -51,7 +61,7 @@ class RPS(object):
         """
         self.L = rpsutil.load_lightnpy(filename)
 
-    def load_images(self, foldername, ext):
+    def load_images(self, foldername=None, ext=None):
         """
         Load images in the folder specified by the "foldername" that have extension "ext"
         :param foldername: foldername
@@ -59,14 +69,16 @@ class RPS(object):
         """
         self.M, self.height, self.width = rpsutil.load_images(foldername, ext)
 
-    def load_mask(self, filename):
+    def load_mask(self, filename=None):
         """
         Load mask image and set the mask indices
         In the mask image, pixels with zero intensity will be ignored.
         :param filename: filename of the mask image
         :return: None
         """
-        mask = rpsutil.load_image(filename)
+        if filename is None:
+            raise ValueError("filename is None")
+        mask = rpsutil.load_image(filename=filename)
         mask = mask.reshape((-1, 1))
         self.valid_ind = np.where(mask != 0)[0]
         self.invalid_ind = np.where(mask == 0)[0]
@@ -76,7 +88,15 @@ class RPS(object):
         Visualize normal map
         :return: None
         """
-        rpsutil.disp_normalmap(self.N, self.height, self.width)
+        rpsutil.disp_normalmap(normal=self.N, height=self.height, width=self.width)
+
+    def save_normalmap(self, filename=None):
+        """
+        Saves normal map as numpy array format (npy)
+        :param filename: filename of a normal map
+        :return: None
+        """
+        rpsutil.save_normalmap(filename=filename, normal=self.N, height=self.height, width=self.width)
 
     def solve(self, method=L2_SOLVER):
         if self.M is None:
@@ -261,7 +281,9 @@ class RPS(object):
             _M = self.M.T
         else:
             _M = self.M[self.valid_ind, :].T
+
         A, E, ite = rpsnumerics.rpca_inexact_alm(_M)    # RPCA Photometric stereo
+
         if self.valid_ind is None:
             self.N = np.linalg.lstsq(self.L.T, A, rcond=None)[0].T
             self.N = normalize(self.N, axis=1)    # normalize to account for diffuse reflectance

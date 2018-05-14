@@ -1,9 +1,10 @@
 # Robust Photometric Stereo in Python
 
-written by Yasuyuki Matsushita (yasumat@ist.osaka-u.ac.jp)
+written by Yasuyuki Matsushita (yasumat@ist.osaka-u.ac.jp) supported 
+by Osaka University and JSPS KAKENHI Grant Number JP16H01732, Japan
 
 based on a part of robust photometric stereo works in 2010-2018 conducted at Microsoft Research Asia and Osaka University
-together with external collaborators.
+together with external collaborators listed in the publication list below.
 
 
 ### What is Photometric Stereo?
@@ -12,6 +13,38 @@ together with external collaborators.
 Photometric Stereo is an approach to determining surface normal of 
 a scene from a set of images recorded from a fixed viewpoint but under
 varying lighting conditions, originally proposed by Woodham [1].
+
+
+### What is *Robust* Photometric Stereo?
+
+Conventional Photometric Stereo is based on least-square regression (or L2 residual minimization), 
+which is susceptible to large *outliers*. For example, when a Lambertian reflectance and local illumination model 
+are assumed, specular high-lights and cast shadows are regarded *outliers*, causing inaccurate estimates of 
+surface normal. 
+
+Robust Photometric Stereo effectively disregards such outliers based on *sparse* regression. 
+This code implements robust photometric stereo based on:
+* L1 residual minimization
+* Sparse Bayesian learning
+* Robust Principal Component Analysis (RPCA)
+
+It also includes a conventional L2 residual minimization (or least-squares) method.
+
+### How to use?
+
+Download this package and run demo code:
+```
+python demo.py
+```
+
+To switch the solver, choose any of the following one when calling `RPS.sovle()`
+    
+    RPS.L2_SOLVER    # Conventional least-squares
+    RPS.L1_SOLVER    # L1 residual minimization
+    RPS.L1_SOLVER_MULTICORE    # L1 residual minimization (multicore)
+    RPS.SBL_SOLVER    # Sparse Bayesian Learning
+    RPS.SBL_SOLVER_MULTICORE    # Sparse Bayesian Learning (multicore)
+    RPS.RPCA_SOLVER    # Robust PCA
 
 ### Conditions of use
 
@@ -48,20 +81,21 @@ consider citing the following papers:
 ### Dependencies
 The code is written in Python 3.6 but should be able to adapt it to Python 2.x if needed.
 You might need the following Python packages installed:
-* cv2 (OpenCV, used for image I/O)
-* glob (used for reading out a list of images)
-* numpy (main computation depends on matrix operations)
-* sklearn (scikit-learn, used for normalization of array)
+* `cv2` (OpenCV, used for image I/O)
+* `glob` (used for reading out a list of images)
+* `numpy` (main computation depends on matrix operations)
+* `sklearn` (scikit-learn, used for normalization of array)
 
 
 ### Acknowledgements
 
-This work was supported by Microsoft Research Asia, Osaka University, and JSPS KAKENHI Grant
+This code implementation work is supported by Osaka University and JSPS KAKENHI Grant
 Number JP16H01732, Japan.
+
 
 ### Contact information
 
-Questions? Comments? Bug reports? Please contact Yasuyuki Matsushita at yasumat@ist.osaka-u.ac.jp.
+Questions / Comments? Bug reports? Please contact Yasuyuki Matsushita at yasumat@ist.osaka-u.ac.jp.
 
 
 ### References

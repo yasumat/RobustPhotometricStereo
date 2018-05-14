@@ -14,4 +14,5 @@ start = time.time()
 rps.solve(RPS.L2_SOLVER)
 elapsed_time = time.time() - start
 print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
-rps.disp_normalmap()
+rps.disp_normalarray()
+rps.save_normalarray()

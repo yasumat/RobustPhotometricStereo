@@ -2,10 +2,19 @@ import numpy as np
 import warnings
 
 
-def L1_residual_min(A, b, MAX_ITER=1000, tol=1.0e-8):
+def L1_residual_min(A, b, max_ite=1000, tol=1.0e-8):
     """
     L1 residual minimization by iteratively reweighted least squares (IRLS)
         minimize ||Ax - b||_1
+
+    :param A: A design matrix (numpy 2D array)
+    :param b: A column vector as a numpy 2D array
+    :param max_ite:Maximum number of iterations
+    :param tol: Tolerance
+    :return: An approximate solution `x` that minimizes ||Ax - b||_0.
+
+    Raises:
+        ValueError: An error occurs in evaluating the dimensionality of the input matrix A and vector b.
     """
     if A.shape[0] != b.shape[0]:
         raise ValueError("Inconsistent dimensionality between A and b")
@@ -18,7 +27,7 @@ def L1_residual_min(A, b, MAX_ITER=1000, tol=1.0e-8):
         raise ValueError("b needs to be a column vector m x 1")
 
     iter = 0
-    while iter < MAX_ITER:
+    while iter < max_ite:
         iter = iter + 1
         # Solve the weighted least squares WAx=Wb
         x = np.linalg.lstsq(W.dot(A), W.dot(b), rcond=None)[0]
@@ -39,17 +48,14 @@ def sparse_bayesian_learning(A, b, max_ite=1000, tol=1.0e-8):
     Computes L0 residual minimization by sparse bayesian learning
     to derive an approximate solution for minimize ||Ax - b||_0.
 
-    Args:
-        A: A design matrix (numpy 2D array)
-        b: A column vector as a numpy 2D array
-        max_ite: (optional) Maximum number of iterations
-        tol: (optional) Tolerance
-
-    Returns:
-        x: An approximate solution to minimize ||Ax - b||_0.
+    :param A: A design matrix (numpy 2D array)
+    :param b: A column vector as a numpy 2D array
+    :param MAX_ITER:Maximum number of iterations
+    :param tol: Tolerance
+    :return: An approximate solution `x` that minimizes ||Ax - b||_0.
 
     Raises:
-        ValueError: An error occurred in evaluating the dimensionality of the input matrix A and vector b.
+        ValueError: An error occurs in evaluating the dimensionality of the input matrix A and vector b.
 
     """
     GAMMA_THR = 1e-8    # For numerical stability
@@ -99,9 +105,6 @@ def neg(a):
 def shrinkage(x, kappa):
     """
     Shrinkage operation
-    :param x:
-    :param kappa:
-    :return:
     """
     return pos(x - kappa) - pos(-x - kappa)
 
@@ -115,17 +118,14 @@ def rpca_inexact_alm(D, lambda_=None, max_ite=1000, tol=1.0e-6):
     The decomposition is performed by solving the following problem:
         minimize_{A, E} ||A||_* + lambda_ * ||E||_1 s.t. D = A + E
 
-    Args:
-        D: Input matrix to be decomposed
-        lambda_: A weighting parameter for controlling the low-rankness and sparsity
-        max_ite: (optional) Maximum number of iterations
-        tol: (optional) Tolerance
-
-    Returns:
+    :param D: Input matrix to be decomposed
+    :param lambda_: A weighting parameter for controlling the low-rankness and sparsity
+    :param max_ite: Maximum number of iterations
+    :param tol: Tolerance
+    :return:
         A: Low-rank matrix
         E: Sparse error matrix
         ite: Number of iterations
-
     Raises:
         ValueError: An error occurred in evaluating the dimensionality of the input matrix D.
 
