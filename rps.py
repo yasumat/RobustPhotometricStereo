@@ -32,8 +32,8 @@ class RPS(object):
         self.N = None   # surface normal matrix in numpy array
         self.height = None  # image height
         self.width = None   # image width
-        self.valid_ind = None    # mask (indices of active pixel locations (rows of M))
-        self.invalid_ind = None    # mask (indices of inactive pixel locations (rows of M))
+        self.foreground_ind = None    # mask (indices of active pixel locations (rows of M))
+        self.background_ind = None    # mask (indices of inactive pixel locations (rows of M))
 
     def load_lighttxt(self, filename=None):
         """
@@ -69,6 +69,13 @@ class RPS(object):
         """
         self.M, self.height, self.width = rpsutil.load_images(foldername, ext)
 
+    def load_npyimages(self, foldername=None):
+        """
+        Load images in the folder specified by the "foldername" in the numpy format
+        :param foldername: foldername
+        """
+        self.M, self.height, self.width = rpsutil.load_npyimages(foldername)
+
     def load_mask(self, filename=None):
         """
         Load mask image and set the mask indices
@@ -80,15 +87,15 @@ class RPS(object):
             raise ValueError("filename is None")
         mask = rpsutil.load_image(filename=filename)
         mask = mask.reshape((-1, 1))
-        self.valid_ind = np.where(mask != 0)[0]
-        self.invalid_ind = np.where(mask == 0)[0]
+        self.foreground_ind = np.where(mask != 0)[0]
+        self.background_ind = np.where(mask == 0)[0]
 
-    def disp_normalmap(self):
+    def disp_normalmap(self, delay=0):
         """
         Visualize normal map
         :return: None
         """
-        rpsutil.disp_normalmap(normal=self.N, height=self.height, width=self.width)
+        rpsutil.disp_normalmap(normal=self.N, height=self.height, width=self.width, delay=delay)
 
     def save_normalmap(self, filename=None):
         """
@@ -96,7 +103,7 @@ class RPS(object):
         :param filename: filename of a normal map
         :return: None
         """
-        rpsutil.save_normalmap(filename=filename, normal=self.N, height=self.height, width=self.width)
+        rpsutil.save_normalmap_as_npy(filename=filename, normal=self.N, height=self.height, width=self.width)
 
     def solve(self, method=L2_SOLVER):
         if self.M is None:
@@ -131,9 +138,9 @@ class RPS(object):
         """
         self.N = np.linalg.lstsq(self.L.T, self.M.T, rcond=None)[0].T
         self.N = normalize(self.N, axis=1)  # normalize to account for diffuse reflectance
-        if self.invalid_ind is not None:
+        if self.background_ind is not None:
             for i in range(self.N.shape[1]):
-                self.N[self.invalid_ind, i] = 0
+                self.N[self.background_ind, i] = 0
 
     def _solve_l1(self):
         """
@@ -147,10 +154,10 @@ class RPS(object):
         """
         A = self.L.T
         self.N = np.zeros((self.M.shape[0], 3))
-        if self.valid_ind is None:
+        if self.foreground_ind is None:
             indices = range(self.M.shape[0])
         else:
-            indices = self.valid_ind
+            indices = self.foreground_ind
 
         for index in indices:
             b = np.array([self.M[index, :]]).T
@@ -171,13 +178,13 @@ class RPS(object):
         from multiprocessing import Pool
         import multiprocessing
 
-        if self.valid_ind is None:
+        if self.foreground_ind is None:
             indices = range(self.M.shape[0])
         else:
-            indices = self.valid_ind
+            indices = self.foreground_ind
         p = Pool(processes=multiprocessing.cpu_count()-1)
         normal = p.map(self._solve_l1_multicore_impl, indices)
-        if self.valid_ind is None:
+        if self.foreground_ind is None:
             self.N = np.asarray(normal)
             self.N = normalize(self.N, axis=1)
         else:
@@ -185,7 +192,7 @@ class RPS(object):
             N = normalize(N, axis=1)
             self.N = np.zeros((self.M.shape[0], 3))
             for i in range(N.shape[1]):
-                self.N[self.valid_ind, i] = N[:, i]
+                self.N[self.foreground_ind, i] = N[:, i]
 
     def _solve_l1_multicore_impl(self, index):
         """
@@ -213,10 +220,10 @@ class RPS(object):
         """
         A = self.L.T
         self.N = np.zeros((self.M.shape[0], 3))
-        if self.valid_ind is None:
+        if self.foreground_ind is None:
             indices = range(self.M.shape[0])
         else:
-            indices = self.valid_ind
+            indices = self.foreground_ind
 
         for index in indices:
             b = np.array([self.M[index, :]]).T
@@ -237,13 +244,13 @@ class RPS(object):
         from multiprocessing import Pool
         import multiprocessing
 
-        if self.valid_ind is None:
+        if self.foreground_ind is None:
             indices = range(self.M.shape[0])
         else:
-            indices = self.valid_ind
+            indices = self.foreground_ind
         p = Pool(processes=multiprocessing.cpu_count()-1)
         normal = p.map(self._solve_sbl_multicore_impl, indices)
-        if self.valid_ind is None:
+        if self.foreground_ind is None:
             self.N = np.asarray(normal)
             self.N = normalize(self.N, axis=1)
         else:
@@ -251,7 +258,7 @@ class RPS(object):
             N = normalize(N, axis=1)
             self.N = np.zeros((self.M.shape[0], 3))
             for i in range(self.N.shape[1]):
-                self.N[self.valid_ind, i] = N[:, i]
+                self.N[self.foreground_ind, i] = N[:, i]
 
     def _solve_sbl_multicore_impl(self, index):
         """
@@ -277,14 +284,14 @@ class RPS(object):
 
         Compute surface normal : numpy array of surface normal (p \times 3)
         """
-        if self.valid_ind is None:
+        if self.foreground_ind is None:
             _M = self.M.T
         else:
-            _M = self.M[self.valid_ind, :].T
+            _M = self.M[self.foreground_ind, :].T
 
         A, E, ite = rpsnumerics.rpca_inexact_alm(_M)    # RPCA Photometric stereo
 
-        if self.valid_ind is None:
+        if self.foreground_ind is None:
             self.N = np.linalg.lstsq(self.L.T, A, rcond=None)[0].T
             self.N = normalize(self.N, axis=1)    # normalize to account for diffuse reflectance
         else:
@@ -292,4 +299,4 @@ class RPS(object):
             N = normalize(N, axis=1)    # normalize to account for diffuse reflectance
             self.N = np.zeros((self.M.shape[0], 3))
             for i in range(self.N.shape[1]):
-                self.N[self.valid_ind, i] = N[:, i]
+                self.N[self.foreground_ind, i] = N[:, i]
