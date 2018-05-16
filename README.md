@@ -14,7 +14,7 @@ Photometric Stereo is an approach to determining surface normal of
 a scene from a set of images recorded from a fixed viewpoint but under
 varying lighting conditions, originally proposed by Woodham [1].
 
-<img src="./lambert_noshadow.gif" width="256">&rarr;<img src="./gt_normal.png" width="256">
+<img src="./lambert_noshadow.gif" width="256">&rarr;<img src="./gt_normal_disp.png" width="256">
 
 ### What is *Robust* Photometric Stereo?
 
