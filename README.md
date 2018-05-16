@@ -9,13 +9,13 @@ together with external collaborators listed in the publication list below.
 
 ### What is Photometric Stereo?
 
-
 Photometric Stereo is an approach to determining surface normal of 
 a scene from a set of images recorded from a fixed viewpoint but under
 varying lighting conditions, originally proposed by Woodham [1].
 <p align="center">
 <img src="./lambert_noshadow.gif" width="256"> &rarr; <img src="./gt_normal_disp.png" width="256">
 </p>
+
 ### What is *Robust* Photometric Stereo?
 
 Conventional Photometric Stereo is based on least-square regression (or L2 residual minimization), 
@@ -33,6 +33,10 @@ This code implements robust photometric stereo based on:
 * Robust Principal Component Analysis (RPCA)
 
 This software implementation also includes a conventional L2 residual minimization (or least-squares) method.
+
+Input | L2 | L1 | RPCA
+--- | --- | --- | ---
+<img src="./specular.gif" width="256"> | <img src="./L2_specular_normal.png" width="256"> | <img src="./L1_specular_normal.png" width="256"> | <img src="./RPCA_specular_normal.png" width="256"> 
 
 ### How to use?
 
