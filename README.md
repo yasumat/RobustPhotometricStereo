@@ -14,14 +14,16 @@ Photometric Stereo is an approach to determining surface normal of
 a scene from a set of images recorded from a fixed viewpoint but under
 varying lighting conditions, originally proposed by Woodham [1].
 
-<img src="./lambert_noshadow.gif" width="256">&rarr;<img src="./gt_normal_disp.png" width="256">
+<img src="./lambert_noshadow.gif" width="256"> &rarr; <img src="./gt_normal_disp.png" width="256">
 
 ### What is *Robust* Photometric Stereo?
 
 Conventional Photometric Stereo is based on least-square regression (or L2 residual minimization), 
 which is susceptible to large *outliers*. For example, when a Lambertian reflectance and local illumination model 
 are assumed, specular high-lights and cast shadows are regarded *outliers*, causing inaccurate estimates of 
-surface normal. 
+surface normal.
+
+<img src="./specular.gif" width="256"> &rarr; <img src="./L2_specular_normal.png" width="256">
 
 Robust Photometric Stereo effectively disregards such outliers based on *sparse* regression. 
 This code implements robust photometric stereo based on:
@@ -29,7 +31,7 @@ This code implements robust photometric stereo based on:
 * Sparse Bayesian learning
 * Robust Principal Component Analysis (RPCA)
 
-It also includes a conventional L2 residual minimization (or least-squares) method.
+This software implementation also includes a conventional L2 residual minimization (or least-squares) method.
 
 ### How to use?
 
