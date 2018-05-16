@@ -22,9 +22,9 @@ Conventional Photometric Stereo is based on least-square regression (or L2 resid
 which is susceptible to large *outliers*. For example, when a Lambertian reflectance and local illumination model 
 are assumed, specular high-lights and cast shadows are regarded *outliers*, causing inaccurate estimates of 
 surface normal.
-<div style="text-align:center">
+<p align="center">
 <img src="./specular.gif" width="256"> -> <img src="./L2_specular_normal.png" width="256">
-</div>
+</p>
 
 Robust Photometric Stereo effectively disregards such outliers based on *sparse* regression. 
 This code implements robust photometric stereo based on:
