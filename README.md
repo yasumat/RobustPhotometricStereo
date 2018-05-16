@@ -20,7 +20,7 @@ varying lighting conditions, originally proposed by Woodham [1].
 
 Conventional Photometric Stereo is based on least-square regression (or L2 residual minimization), 
 which is susceptible to large *outliers*. For example, when a Lambertian reflectance and local illumination model 
-are assumed, specular high-lights and cast shadows are regarded *outliers*, causing inaccurate estimates of 
+are assumed, specular high-lights and cast shadows are regarded as *outliers*, causing inaccurate estimates of 
 surface normal.
 <p align="center">
 <img src="./specular.gif" width="256"> &rarr; <img src="./L2_specular_normal.png" width="256">
@@ -45,7 +45,7 @@ Download this package and run demo code:
 python demo.py
 ```
 
-To switch the solver, choose any of the following one when calling `RPS.sovle()`
+To switch the solver, look into `demo.py` and choose any of the following one when calling `RPS.sovle()`
     
     RPS.L2_SOLVER    # Conventional least-squares
     RPS.L1_SOLVER    # L1 residual minimization
