@@ -34,9 +34,9 @@ This code implements robust photometric stereo based on:
 
 This software implementation also includes a conventional L2 residual minimization (or least-squares) method.
 
-Input | L2 | L1 | RPCA
---- | --- | --- | ---
-<img src="./specular.gif" width="256"> | <img src="./L2_specular_normal.png" width="256"> | <img src="./L1_specular_normal.png" width="256"> | <img src="./RPCA_specular_normal.png" width="256"> 
+Input | Ground Truth | L2 | L1 | SBL | RPCA
+--- | --- | --- | --- | --- | ---
+<img src="./specular.gif" width="256"> | <img src="./gt_normal_disp.png" width="256"> | <img src="./L2_specular_normal.png" width="256"> | <img src="./L1_specular_normal.png" width="256"> | <img src="./SBL_specular_normal.png" width="256"> | <img src="./RPCA_specular_normal.png" width="256"> 
 
 ### How to use?
 
