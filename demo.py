@@ -6,9 +6,10 @@ from rps import RPS
 import rpsutil
 
 # Choose a method
-#METHOD = RPS.L2_SOLVER
-#METHOD = RPS.L1_SOLVER
-METHOD = RPS.RPCA_SOLVER
+METHOD = RPS.L2_SOLVER    # Least-squares
+#METHOD = RPS.L1_SOLVER_MULTICORE    # L1 residual minimization
+#METHOD = RPS.SBL_SOLVER_MULTICORE    # Sparse Bayesian Learning
+#METHOD = RPS.RPCA_SOLVER    # Robust PCA
 
 # Choose a dataset
 DATA_FOLDERNAME = './data/bunny/bunny_specular/'    # Specular with cast shadow
