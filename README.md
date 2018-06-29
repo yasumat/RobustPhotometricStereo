@@ -84,7 +84,7 @@ consider citing the following papers:
         	number={9},
         	pages={1078--1091},
         	year={2014}
-    	}
+    }
 
 ### Dependencies
 The code is written in Python 3.6 but should be able to adapt it to Python 2.x if needed.
