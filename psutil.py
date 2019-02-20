@@ -116,7 +116,8 @@ def disp_normalmap(normal=None, height=None, width=None, delay=0):
     N = (N + 1.0) / 2.0  # Rescale
     cv2.imshow('normal map', N)
     cv2.waitKey(delay)
-    cv2.destroyAllWindows()
+    cv2.destroyWindow('normal map')
+    cv2.waitKey(1)    # to deal with frozen window...
 
 
 def save_normalmap_as_npy(filename=None, normal=None, height=None, width=None):

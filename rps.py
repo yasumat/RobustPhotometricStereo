@@ -8,7 +8,7 @@ __author__ = "Yasuyuki Matsushita <yasumat@ist.osaka-u.ac.jp>"
 __version__ = "0.1.0"
 __date__ = "11 May 2018"
 
-import rpsutil
+import psutil
 import rpsnumerics
 import numpy as np
 from sklearn.preprocessing import normalize
@@ -46,7 +46,7 @@ class RPS(object):
 
         :param filename: filename of lights.txt
         """
-        self.L = rpsutil.load_lighttxt(filename)
+        self.L = psutil.load_lighttxt(filename)
 
     def load_lightnpy(self, filename=None):
         """
@@ -59,7 +59,7 @@ class RPS(object):
 
         :param filename: filename of lights.npy
         """
-        self.L = rpsutil.load_lightnpy(filename)
+        self.L = psutil.load_lightnpy(filename)
 
     def load_images(self, foldername=None, ext=None):
         """
@@ -67,14 +67,14 @@ class RPS(object):
         :param foldername: foldername
         :param ext: file extension
         """
-        self.M, self.height, self.width = rpsutil.load_images(foldername, ext)
+        self.M, self.height, self.width = psutil.load_images(foldername, ext)
 
     def load_npyimages(self, foldername=None):
         """
         Load images in the folder specified by the "foldername" in the numpy format
         :param foldername: foldername
         """
-        self.M, self.height, self.width = rpsutil.load_npyimages(foldername)
+        self.M, self.height, self.width = psutil.load_npyimages(foldername)
 
     def load_mask(self, filename=None):
         """
@@ -85,7 +85,7 @@ class RPS(object):
         """
         if filename is None:
             raise ValueError("filename is None")
-        mask = rpsutil.load_image(filename=filename)
+        mask = psutil.load_image(filename=filename)
         mask = mask.reshape((-1, 1))
         self.foreground_ind = np.where(mask != 0)[0]
         self.background_ind = np.where(mask == 0)[0]
@@ -95,7 +95,7 @@ class RPS(object):
         Visualize normal map
         :return: None
         """
-        rpsutil.disp_normalmap(normal=self.N, height=self.height, width=self.width, delay=delay)
+        psutil.disp_normalmap(normal=self.N, height=self.height, width=self.width, delay=delay)
 
     def save_normalmap(self, filename=None):
         """
@@ -103,7 +103,7 @@ class RPS(object):
         :param filename: filename of a normal map
         :return: None
         """
-        rpsutil.save_normalmap_as_npy(filename=filename, normal=self.N, height=self.height, width=self.width)
+        psutil.save_normalmap_as_npy(filename=filename, normal=self.N, height=self.height, width=self.width)
 
     def solve(self, method=L2_SOLVER):
         if self.M is None:
