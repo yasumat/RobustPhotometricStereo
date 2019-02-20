@@ -77,13 +77,13 @@ consider citing the following papers:
 	}
 
     @article{RPS2014pami,
-        title={Photometric Stereo Using Sparse Bayesian Regression for General Diffuse Surfaces},
-        author={Satoshi Ikehata, David P. Wipf, Yasuyuki Matsushita, and Kiyoharu Aizawa},
-        journal={IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI)},
-        volume={36},
-        number={9},
-        pages={1078--1091},
-        year={2014}
+        	title={Photometric Stereo Using Sparse Bayesian Regression for General Diffuse Surfaces},
+        	author={Satoshi Ikehata, David P. Wipf, Yasuyuki Matsushita, and Kiyoharu Aizawa},
+        	journal={IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI)},
+        	volume={36},
+        	number={9},
+        	pages={1078--1091},
+        	year={2014}
     }
 
 ### Dependencies
