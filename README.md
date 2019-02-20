@@ -45,7 +45,7 @@ Download this package and run the demo code:
 python demo.py
 ```
 
-To switch the solver, look into `demo.py` and choose any of the following one when calling `RPS.sovle()`
+To switch the solver, look into `demo.py` and choose any of the following one when calling `RPS.solve()`
     
     RPS.L2_SOLVER    # Conventional least-squares
     RPS.L1_SOLVER    # L1 residual minimization
