@@ -12,8 +12,8 @@ METHOD = RPS.L2_SOLVER    # Least-squares
 #METHOD = RPS.RPCA_SOLVER    # Robust PCA
 
 # Choose a dataset
-DATA_FOLDERNAME = './data/bunny/bunny_specular/'    # Specular with cast shadow
-#DATA_FOLDERNAME = './data/bunny/bunny_lambert/'    # Lambertian diffuse with cast shadow
+#DATA_FOLDERNAME = './data/bunny/bunny_specular/'    # Specular with cast shadow
+DATA_FOLDERNAME = './data/bunny/bunny_lambert/'    # Lambertian diffuse with cast shadow
 #DATA_FOLDERNAME = './data/bunny/bunny_lambert_noshadow/'    # Lambertian diffuse without cast shadow
 
 LIGHT_FILENAME = './data/bunny/lights.npy'
