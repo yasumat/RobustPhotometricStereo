@@ -83,6 +83,7 @@ def sparse_bayesian_learning(A, b, max_ite=1000, tol=1.0e-8):
         Sigma_e_diag = np.sum(A * Xi.T, axis=1)
         gamma = e * e + np.array([Sigma_e_diag]).T
         gamma = np.maximum(gamma, GAMMA_THR)
+        ite = ite + 1
     return x
 
 
